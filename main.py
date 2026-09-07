@@ -28,7 +28,7 @@ from index_trend_visualiser import IndexTrendVisualiser
 # * VALUATION_CALCULATOR
 # * INDEX_VISUALISER
 # * ALL_CALCULATORS
-operation = "ROI_CALCULATOR"
+operation = "VALUATION_CALCULATOR"
 
 ######### ROI_calculator variables
 M=3000000  # initil credit
@@ -40,10 +40,11 @@ enflation_estimates_roi = [1.2, 1.4, 1.3, 1.2, 1.5, 1.1, 1.1, 1.1, 1.1, 1.1, 1.1
 
 ######### Valuation_calculator variables
 payment_options = [ # print total payment and number of months here
-    (34000*12, 12),
+    (559, 4),
+    (537.5, 1)
 ]
 # this will set yearly enflations to 1.6, 1.4, 1.1, 1.1, 1.1 ... . If you wanna set your own estimated enflation rates change the list to a list of yearly enflation rates.
-enflation_estimates_val = [1.2, 1.25, 1.3, 1.25, 1.2]  # 2 years of data added since 18 months is less than 2 years
+enflation_estimates_val = [1.3, 1.25, 1.3, 1.25, 1.2]  # 2 years of data added since 18 months is less than 2 years
 
 ######### Index Visualiser variables
 current_day = 15
