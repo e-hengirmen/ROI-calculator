@@ -5,7 +5,7 @@ import yfinance as yf
 from tickers import tickers
 
 # 1. Configuration
-lookback_months = 6  # X months default (translates to ~63 trading days)
+lookback_months = 3  # X months default (translates to ~63 trading days)
 output_dir = f"charts_stacked_{lookback_months}m"
 os.makedirs(output_dir, exist_ok=True)
 
