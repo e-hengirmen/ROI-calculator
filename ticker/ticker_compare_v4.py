@@ -13,7 +13,7 @@ data_13 = []
 data_close = []
 
 # Dictionary to store percentage returns per time slot across all days
-# Format: { "09:30": [return_day_1, return_day_2, ...], "09:45": [...], ... }
+# Format: { "09:30": [return_day_1, return_day_2, ...], "09:35": [...], ... }
 time_slot_returns = defaultdict(list)
 
 # Normalize weights so they sum to 1.0
@@ -61,11 +61,8 @@ for current_date, day_5m in grouped_5m:
         pct_5m[t] * weights[t] for t in tickers if t in pct_5m.columns
     )
 
-    # --- Collect 15-Minute Weighted Portfolio Returns ---
-    # Resample portfolio series to 15-minute resolution taking the latest price
-    portfolio_15m = portfolio_5m.resample("15min").last().dropna()
-    
-    for timestamp, val in portfolio_15m.items():
+    # --- Collect 5-Minute Weighted Portfolio Returns ---
+    for timestamp, val in portfolio_5m.dropna().items():
         time_str = timestamp.strftime("%H:%M")
         time_slot_returns[time_str].append(float(val))
 
@@ -217,7 +214,7 @@ for current_date, day_5m in grouped_5m:
 
 
 # ----------------------------------------------------
-# 5. GEOMETRIC MEAN CALCULATION FOR 15-MIN SLOTS
+# 5. GEOMETRIC MEAN CALCULATION FOR 5-MIN SLOTS
 # ----------------------------------------------------
 n = len(data_13)
 period = days / 30.0
@@ -236,15 +233,15 @@ monthly_return = (
     - 1
 ) * 100
 
-# Compute geometric mean per 15-minute slot
-geo_means_15m = {}
+# Compute geometric mean per 5-minute slot
+geo_means_5m = {}
 for time_str, values in sorted(time_slot_returns.items()):
     slot_n = len(values)
     if slot_n > 0:
         geo_mean = (
             math.exp(sum(math.log(x / 100 + 1) for x in values) / slot_n) - 1
         ) * 100
-        geo_means_15m[time_str] = geo_mean
+        geo_means_5m[time_str] = geo_mean
 
 # Write output file
 with open(os.path.join(output_dir, "summary.txt"), "w") as f:
@@ -259,10 +256,10 @@ with open(os.path.join(output_dir, "summary.txt"), "w") as f:
         f" {(mult_close-mult_13):+.2f}%\n"
     )
     f.write("\n")
-    f.write("--- GEOMETRIC MEANS BY 15-MINUTE TIMESTEP ---\n")
-    for time_str, g_mean in geo_means_15m.items():
+    f.write("--- GEOMETRIC MEANS BY 5-MINUTE TIMESTEP ---\n")
+    for time_str, g_mean in geo_means_5m.items():
         f.write(f"{time_str}: {g_mean:+.2f}%\n")
-    f.write("---------------------------------------------\n\n")
+    f.write("--------------------------------------------\n\n")
 
     for i, j in weights.items():
         f.write(f"{i}: {j*100:.2f}%\n")
